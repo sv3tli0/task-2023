@@ -5,12 +5,8 @@ namespace App\Console\Commands;
 use App\Models\User;
 use Illuminate\Console\Command;
 
-use Illuminate\Support\Facades\Auth;
-
 use function Laravel\Prompts\multiselect;
-use function Laravel\Prompts\search;
 use function Laravel\Prompts\select;
-use function Laravel\Prompts\suggest;
 
 class UserGenerateToken extends Command
 {
@@ -46,10 +42,11 @@ class UserGenerateToken extends Command
             $this->error(':( User not found! :(');
 
             $this->ask('Do you want to try again?') ? $this->handle() : $this->info('Bye!');
+
             return;
         }
 
-        $this->info('Generating token for user: ' . $user->name);
+        $this->info('Generating token for user: '.$user->name);
         $abilities = multiselect(
             'Pick the abilities that you want to assign to the token (can be empty):',
             ['read', 'write', 'delete', 'update']
@@ -58,6 +55,6 @@ class UserGenerateToken extends Command
         $token = $user->createToken('token', $abilities)->plainTextToken;
 
         $this->info('Token generated successfully!');
-        $this->info('Token: ' . $token);
+        $this->info('Token: '.$token);
     }
 }
