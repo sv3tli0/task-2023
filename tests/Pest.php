@@ -13,8 +13,18 @@
 
 uses(
     Tests\TestCase::class,
-    // Illuminate\Foundation\Testing\RefreshDatabase::class,
-)->in('Feature');
+    Illuminate\Foundation\Testing\RefreshDatabase::class,
+)->beforeEach(function () {
+    // Fixed first product.
+    \App\Models\Product::create([
+        'name' => 'Product Name',
+        'description' => 'Product Description.',
+        'price' => 10.00,
+    ]);
+
+    \App\Models\User::factory(5)->create();
+    \App\Models\Product::factory(20)->create();
+})->in('Feature');
 
 /*
 |--------------------------------------------------------------------------
@@ -42,7 +52,23 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function takeBearToken(array $abilities = []): string
 {
-    // ..
+    $user = \App\Models\User::factory()->create();
+
+    return $user->createToken('test', $abilities)
+        ->plainTextToken;
+}
+
+function requestHeaders(array $abilities = [], bool $acceptJson = true): array
+{
+    $headers = [
+        'Authorization' => 'Bearer '.takeBearToken($abilities),
+    ];
+
+    if ($acceptJson) {
+        $headers['Accept'] = 'application/json';
+    }
+
+    return $headers;
 }
