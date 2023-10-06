@@ -49,7 +49,7 @@ class UserGenerateToken extends Command
         $this->info('Generating token for user: '.$user->name);
         $abilities = multiselect(
             'Pick the abilities that you want to assign to the token (can be empty):',
-            ['read', 'write', 'delete', 'update']
+            ['read', 'write', 'delete']
         );
 
         $token = $user->createToken('token', $abilities)->plainTextToken;
